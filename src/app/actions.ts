@@ -14,28 +14,56 @@ const api = axios.create({
 });
 
 export async function searchSubtitles(params: SearchParams): Promise<SearchResponse> {
-  const { query, fileHash, languages } = params;
-  const searchParams = new URLSearchParams();
+  console.log('Searching subtitles with params:', params);
+  
+  try {
+    const searchParams = new URLSearchParams();
 
-  if (query) searchParams.append('query', query);
-  if (fileHash) searchParams.append('moviehash', fileHash);
-  if (languages?.length) searchParams.append('languages', languages.join(','));
+    if (params.query) searchParams.append('query', params.query);
+    if (params.fileHash) searchParams.append('moviehash', params.fileHash);
+    if (params.languages?.length) searchParams.append('languages', params.languages.join(','));
 
-  const response = await api.get(`/subtitles?${searchParams.toString()}`);
-  const firstItem = response.data.data[0];
-  console.log('searchSubtitles response first item', firstItem);
-  console.log('searchSubtitles response first item files', firstItem.attributes.files);
-  return response.data;
+    console.log('Making API request with params:', searchParams.toString());
+    
+    const response = await api.get(`/subtitles?${searchParams.toString()}`);
+    const firstItem = response.data.data[0];
+    console.log('searchSubtitles response first item', firstItem);
+    console.log('searchSubtitles response first item files', firstItem?.attributes?.files);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching subtitles:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        headers: error.response?.headers,
+      });
+    }
+    throw error;
+  }
 }
 
 export async function getLanguages(): Promise<Language[]> {
-  const response = await api.get('/infos/languages');
-  console.log('Languages API response:', response.data);
-  // The API returns an object with a data property containing the array of languages
-  return response.data.data.map((lang: any) => ({
-    code: lang.language_code,
-    name: lang.language_name
-  }));
+  console.log('Fetching languages');
+  
+  try {
+    const response = await api.get('/infos/languages');
+    console.log('Languages API response:', response.data);
+    // The API returns an object with a data property containing the array of languages
+    return response.data.data.map((lang: any) => ({
+      code: lang.language_code,
+      name: lang.language_name
+    }));
+  } catch (error) {
+    console.error('Error fetching languages:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+    }
+    throw error;
+  }
 }
 
 export async function downloadSubtitle(fileId: number): Promise<{ fileName: string; content: string }> {

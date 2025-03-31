@@ -1,10 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Listbox } from '@headlessui/react';
-import { CheckIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { CheckIcon, MagnifyingGlassIcon, ArrowUpTrayIcon } from '@heroicons/react/20/solid';
 import { searchSubtitles, getLanguages, downloadSubtitle } from './actions';
 import { Subtitle, Language } from '@/types/subtitles';
+import { calculateHash } from '@/utils/hash';
+
+// Function to calculate file hash (first and last 8KB)
+async function calculateFileHash(file: File): Promise<string> {
+  try {
+    const hash = await calculateHash(file);
+    return hash;
+  } catch (error) {
+    console.error('Error calculating hash:', error);
+    throw error;
+  }
+}
 
 export default function Home() {
   const [query, setQuery] = useState('');
@@ -16,6 +28,8 @@ export default function Home() {
   const [downloading, setDownloading] = useState<number | null>(null);
   const [languageSearch, setLanguageSearch] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hashCalculating, setHashCalculating] = useState(false);
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -69,6 +83,37 @@ export default function Home() {
     }
   };
 
+  const handleFileDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const file = files[0];
+    setHashCalculating(true);
+    
+    try {
+      const hash = await calculateFileHash(file);
+      setFileHash(hash);
+      console.log('Calculated hash:', hash);
+    } catch (error) {
+      console.error('Error calculating hash:', error);
+    } finally {
+      setHashCalculating(false);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
   const filteredLanguages = languages.filter(lang => 
     lang.name.toLowerCase().includes(languageSearch.toLowerCase()) ||
     lang.code.toLowerCase().includes(languageSearch.toLowerCase())
@@ -94,18 +139,34 @@ export default function Home() {
             />
           </div>
 
-          {/* File Hash Search */}
+          {/* File Hash Search with Drag & Drop */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Search by File Hash
             </label>
-            <input
-              type="text"
-              value={fileHash}
-              onChange={(e) => setFileHash(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Enter file hash..."
-            />
+            <div
+              onDrop={handleFileDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              className={`relative border-2 border-dashed rounded-md p-4 transition-colors ${
+                isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+              }`}
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <ArrowUpTrayIcon className="h-6 w-6 text-gray-400" />
+                <span className="text-sm text-gray-500">
+                  {hashCalculating ? 'Calculating hash...' : 'Drag and drop a file here'}
+                </span>
+              </div>
+              <input
+                type="text"
+                value={fileHash}
+                onChange={(e) => setFileHash(e.target.value)}
+                className="mt-2 w-full px-4 py-2 border rounded-md"
+                placeholder="Or enter file hash manually..."
+                readOnly={hashCalculating}
+              />
+            </div>
           </div>
 
           {/* Language Selector */}
