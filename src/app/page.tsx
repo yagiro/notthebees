@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Listbox } from '@headlessui/react';
-import { CheckIcon } from '@heroicons/react/20/solid';
+import { CheckIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { searchSubtitles, getLanguages, downloadSubtitle } from './actions';
 import { Subtitle, Language } from '@/types/subtitles';
 
@@ -14,6 +14,8 @@ export default function Home() {
   const [results, setResults] = useState<Subtitle[]>([]);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState<number | null>(null);
+  const [languageSearch, setLanguageSearch] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -67,6 +69,11 @@ export default function Home() {
     }
   };
 
+  const filteredLanguages = languages.filter(lang => 
+    lang.name.toLowerCase().includes(languageSearch.toLowerCase()) ||
+    lang.code.toLowerCase().includes(languageSearch.toLowerCase())
+  );
+
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
@@ -106,43 +113,77 @@ export default function Home() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Languages
             </label>
-            <Listbox value={selectedLanguages} onChange={setSelectedLanguages} multiple>
-              <div className="relative">
-                <Listbox.Button className="w-full px-4 py-2 border rounded-md text-left">
-                  <span className="block truncate">
-                    {selectedLanguages.length > 0
-                      ? selectedLanguages.map(lang => lang.name).join(', ')
-                      : 'Select languages...'}
-                  </span>
-                </Listbox.Button>
-                <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1">
-                  {languages.map((language) => (
-                    <Listbox.Option
-                      key={language.code}
-                      value={language}
-                      className={({ active }) =>
-                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                          active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
-                        }`
-                      }
-                    >
-                      {({ selected }) => (
-                        <>
-                          <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
-                            {language.name}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full px-4 py-2 border rounded-md text-left"
+              >
+                <span className="block truncate">
+                  {selectedLanguages.length > 0
+                    ? selectedLanguages.map(lang => lang.name).join(', ')
+                    : 'Select languages...'}
+                </span>
+              </button>
+              
+              {isOpen && (
+                <div className="absolute z-20 mt-1 w-full bg-white shadow-lg rounded-md">
+                  {/* Language Search Input */}
+                  <div className="sticky top-0 bg-white px-3 py-2 border-b">
+                    <div className="relative">
+                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={languageSearch}
+                        onChange={(e) => setLanguageSearch(e.target.value)}
+                        className="w-full text-gray-800 pl-9 pr-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search languages..."
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Language Options */}
+                  <div className="max-h-60 overflow-auto">
+                    {filteredLanguages.map((language) => (
+                      <div
+                        key={language.code}
+                        onClick={() => {
+                          const isSelected = selectedLanguages.some(lang => lang.code === language.code);
+                          if (isSelected) {
+                            setSelectedLanguages(selectedLanguages.filter(lang => lang.code !== language.code));
+                          } else {
+                            setSelectedLanguages([...selectedLanguages, language]);
+                          }
+                        }}
+                        className={`relative cursor-pointer select-none py-2 pl-10 pr-4 hover:bg-blue-100 ${
+                          selectedLanguages.some(lang => lang.code === language.code)
+                            ? 'bg-blue-50 text-blue-900'
+                            : 'text-gray-900'
+                        }`}
+                      >
+                        <span className={`block truncate ${
+                          selectedLanguages.some(lang => lang.code === language.code)
+                            ? 'font-medium'
+                            : 'font-normal'
+                        }`}>
+                          {language.name}
+                        </span>
+                        {selectedLanguages.some(lang => lang.code === language.code) && (
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
                           </span>
-                          {selected ? (
-                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
-                              <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </div>
-            </Listbox>
+                        )}
+                      </div>
+                    ))}
+                    {filteredLanguages.length === 0 && (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        No languages found
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Search Button */}

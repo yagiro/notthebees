@@ -30,11 +30,11 @@ export async function searchSubtitles(params: SearchParams): Promise<SearchRespo
 
 export async function getLanguages(): Promise<Language[]> {
   const response = await api.get('/infos/languages');
-  // The API returns an object with language codes as keys
-  const languagesData = response.data;
-  return Object.entries(languagesData).map(([code, name]) => ({
-    code,
-    name: name as string
+  console.log('Languages API response:', response.data);
+  // The API returns an object with a data property containing the array of languages
+  return response.data.data.map((lang: any) => ({
+    code: lang.language_code,
+    name: lang.language_name
   }));
 }
 
