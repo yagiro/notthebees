@@ -1,103 +1,192 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Listbox } from '@headlessui/react';
+import { CheckIcon } from '@heroicons/react/20/solid';
+import { searchSubtitles, getLanguages, downloadSubtitle } from './actions';
+import { Subtitle, Language } from '@/types/subtitles';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [query, setQuery] = useState('');
+  const [fileHash, setFileHash] = useState('');
+  const [languages, setLanguages] = useState<Language[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<Language[]>([]);
+  const [results, setResults] = useState<Subtitle[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState<number | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      const languagesData = await getLanguages();
+      setLanguages(languagesData);
+    };
+    fetchLanguages();
+  }, []);
+
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const response = await searchSubtitles({
+        query,
+        fileHash,
+        languages: selectedLanguages.map(lang => lang.code),
+      });
+      setResults(response.data);
+    } catch (error) {
+      console.error('Error searching subtitles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownload = async (fileId: number) => {
+    setDownloading(fileId);
+    try {
+      const { fileName, content } = await downloadSubtitle(fileId);
+      
+      // Create a blob from the content
+      const blob = new Blob([content], { type: 'text/plain' });
+      
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      
+      // Trigger the download
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading subtitle:', error);
+    } finally {
+      setDownloading(null);
+    }
+  };
+
+  return (
+    <main className="min-h-screen p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Subtitle Search</h1>
+        
+        <div className="space-y-6">
+          {/* Text Search */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Search by Text
+            </label>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md"
+              placeholder="Enter search text..."
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+
+          {/* File Hash Search */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Search by File Hash
+            </label>
+            <input
+              type="text"
+              value={fileHash}
+              onChange={(e) => setFileHash(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md"
+              placeholder="Enter file hash..."
+            />
+          </div>
+
+          {/* Language Selector */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Select Languages
+            </label>
+            <Listbox value={selectedLanguages} onChange={setSelectedLanguages} multiple>
+              <div className="relative">
+                <Listbox.Button className="w-full px-4 py-2 border rounded-md text-left">
+                  <span className="block truncate">
+                    {selectedLanguages.length > 0
+                      ? selectedLanguages.map(lang => lang.name).join(', ')
+                      : 'Select languages...'}
+                  </span>
+                </Listbox.Button>
+                <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1">
+                  {languages.map((language) => (
+                    <Listbox.Option
+                      key={language.code}
+                      value={language}
+                      className={({ active }) =>
+                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                          active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
+                        }`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                            {language.name}
+                          </span>
+                          {selected ? (
+                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                              <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                            </span>
+                          ) : null}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </div>
+            </Listbox>
+          </div>
+
+          {/* Search Button */}
+          <button
+            onClick={handleSearch}
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300"
           >
-            Read our docs
-          </a>
+            {loading ? 'Searching...' : 'Search'}
+          </button>
+
+          {/* Results */}
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Results</h2>
+            <div className="space-y-4">
+              {results.map((subtitle) => (
+                <div key={subtitle.id} className="border rounded-md p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium">{subtitle.attributes.release}</h3>
+                      <p className="text-sm text-gray-600">
+                        Language: {subtitle.attributes.language}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        File: {subtitle.attributes.files[0].file_name}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleDownload(subtitle.attributes.files[0].file_id)}
+                      disabled={downloading === subtitle.attributes.files[0].file_id}
+                      className="text-blue-600 hover:text-blue-800 disabled:text-blue-300"
+                    >
+                      {downloading === subtitle.attributes.files[0].file_id ? 'Downloading...' : 'Download'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {results.length === 0 && !loading && (
+                <p className="text-gray-500">No results found</p>
+              )}
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </main>
   );
 }
