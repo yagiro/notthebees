@@ -1,4 +1,4 @@
-# Subtitle Search Client
+# notthebees
 
 A Next.js application that allows users to search for subtitles using the OpenSubtitles API.
 
