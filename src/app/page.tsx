@@ -80,8 +80,8 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-[var(--background)] to-[var(--secondary)]/10">
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">SubSync</h1>
-          <p className="text-lg text-[var(--text-secondary)] font-mono">Your smart companion for finding the perfect subtitles in any language</p>
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">NotTheBees</h1>
+          <p className="text-lg text-[var(--text-secondary)] font-mono">They're in my eyes! Also, here's your SRT file.</p>
         </div>
         
         <div className="comic-box bg-[var(--form-background)] p-8 space-y-6">
