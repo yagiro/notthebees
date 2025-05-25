@@ -43,21 +43,31 @@ export function FileHashInput({ value, onChange }: FileHashInputProps) {
   }, []);
 
   return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+    <div className="w-full">
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
         Search by File Hash
       </label>
       <div
         onDrop={handleFileDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`relative border-2 border-dashed rounded-md p-4 transition-colors ${
-          isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+        className={`relative border rounded-lg p-6 transition-all duration-200 ease-in-out ${
+          isDragging 
+            ? 'border-blue-500 bg-blue-50 shadow-lg scale-[1.02]' 
+            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50/50'
         }`}
       >
-        <div className="flex items-center justify-center space-x-2">
-          <ArrowUpTrayIcon className="h-6 w-6 text-gray-400" />
-          <span className="text-sm text-gray-500">
+        <div className="flex flex-col items-center justify-center space-y-3">
+          <div className={`p-3 rounded-full ${
+            isDragging ? 'bg-blue-100' : 'bg-gray-100'
+          } transition-colors duration-200`}>
+            <ArrowUpTrayIcon className={`h-8 w-8 ${
+              isDragging ? 'text-blue-500' : 'text-gray-500'
+            } transition-colors duration-200`} />
+          </div>
+          <span className={`text-sm font-medium ${
+            isDragging ? 'text-blue-600' : 'text-gray-600'
+          } transition-colors duration-200`}>
             {hashCalculating ? 'Calculating hash...' : 'Drag and drop a file here'}
           </span>
         </div>
@@ -65,7 +75,12 @@ export function FileHashInput({ value, onChange }: FileHashInputProps) {
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="mt-2 w-full px-4 py-2 border rounded-md"
+          className={`mt-4 w-full px-4 py-2.5 border rounded-md text-sm transition-all duration-200
+            ${hashCalculating 
+              ? 'bg-gray-50 text-gray-500 cursor-not-allowed' 
+              : 'bg-white hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200'
+            }
+            outline-none shadow-sm`}
           placeholder="Or enter file hash manually..."
           readOnly={hashCalculating}
         />
