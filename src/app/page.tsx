@@ -1,12 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { searchSubtitles, getLanguages, downloadSubtitle } from './actions';
 import { Subtitle, Language } from '@/types/subtitles';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { FileHashInput } from '@/components/FileHashInput';
 import { SearchResults } from '@/components/SearchResults';
 import { Header } from '@/components/Header';
+
+interface ISearchParams {
+  query?: string;
+  fileHash?: string;
+  languages?: string[];
+}
 
 export default function Home() {
   const [query, setQuery] = useState('');
@@ -26,28 +32,31 @@ export default function Home() {
     fetchLanguages();
   }, []);
 
-  useEffect(() => {
-    if (fileHash) {
-      handleSearch();
-    }
-  }, [fileHash]);
+  const currSearchParams: ISearchParams = {
+    query,
+    fileHash,
+    languages: selectedLanguages.map(lang => lang.code),
+  }
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async (searchParams: ISearchParams) => {
     setLoading(true);
     setHasSearched(true);
     try {
-      const response = await searchSubtitles({
-        query,
-        fileHash,
-        languages: selectedLanguages.map(lang => lang.code),
-      });
+      const response = await searchSubtitles(searchParams);
       setResults(response.data);
     } catch (error) {
       console.error('Error searching subtitles:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setHasSearched, setResults]);
+
+
+  useEffect(() => {
+    if (fileHash) {
+      handleSearch({ fileHash });
+    }
+  }, [fileHash, handleSearch]);
 
   const handleDownload = async (fileId: number) => {
     setDownloading(fileId);
@@ -96,7 +105,7 @@ export default function Home() {
               placeholder="Enter movie or TV show title..."
               onKeyDown={e => {
                 if (e.key === 'Enter') {
-                  handleSearch();
+                  handleSearch(currSearchParams);
                 }
               }}
             />
@@ -117,7 +126,7 @@ export default function Home() {
 
           {/* Search Button */}
           <button
-            onClick={handleSearch}
+            onClick={() => handleSearch(currSearchParams)}
             disabled={loading}
             className="comic-button w-full cursor-pointer"
           >

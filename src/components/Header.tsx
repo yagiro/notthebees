@@ -12,7 +12,7 @@ export function Header() {
           className="w-[400px] h-[400px] -mt-[100px] -mb-[70px]"
           priority
         />
-        <p className="text-lg text-[var(--text-secondary)] font-mono">They're in my eyes! Also, here's your SRT file.</p>
+        <p className="text-lg text-[var(--text-secondary)] font-mono">They&apos;re in my eyes! Also, here&apos;s your SRT file.</p>
       </div>
     </div>
   );

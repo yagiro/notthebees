@@ -43,14 +43,19 @@ export async function searchSubtitles(params: SearchParams): Promise<SearchRespo
   }
 }
 
+interface ILang {
+  language_code: string;
+  language_name: string;
+}
+
 export async function getLanguages(): Promise<Language[]> {
   console.log('Fetching languages');
   
   try {
     const response = await api.get('/infos/languages');
-    console.log('Languages API response:', response.data);
+    // console.log('Languages API response:', response.data);
     // The API returns an object with a data property containing the array of languages
-    return response.data.data.map((lang: any) => ({
+    return response.data.data.map((lang: ILang) => ({
       code: lang.language_code,
       name: lang.language_name
     }));
