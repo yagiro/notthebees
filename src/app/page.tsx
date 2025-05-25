@@ -130,6 +130,7 @@ export default function Home() {
             downloading={downloading}
             onDownload={handleDownload}
             hasSearched={hasSearched}
+            languages={languages}
           />
         </div>
       </div>

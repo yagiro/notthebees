@@ -1,4 +1,4 @@
-import { Subtitle } from '@/types/subtitles';
+import { Subtitle, Language } from '@/types/subtitles';
 import { ArrowDownTrayIcon } from '@heroicons/react/20/solid';
 
 interface SearchResultsProps {
@@ -7,9 +7,15 @@ interface SearchResultsProps {
   downloading: number | null;
   onDownload: (fileId: number) => void;
   hasSearched: boolean;
+  languages: Language[];
 }
 
-export function SearchResults({ results, loading, downloading, onDownload, hasSearched }: SearchResultsProps) {
+export function SearchResults({ results, loading, downloading, onDownload, hasSearched, languages }: SearchResultsProps) {
+  const getLanguageName = (code: string) => {
+    const language = languages.find(lang => lang.code === code);
+    return language?.name || code;
+  };
+
   if (loading) {
     return (
       <div className="mt-8 text-center py-8">
@@ -44,11 +50,11 @@ export function SearchResults({ results, loading, downloading, onDownload, hasSe
             className="comic-box bg-[var(--form-background)] p-4 hover:bg-[var(--secondary)]/5 transition-colors"
           >
             <div className="flex justify-between items-start">
-              <div className="space-y-1">
+              <div className="space-y-1 max-w-7/10">
                 <h3 className="font-medium text-[var(--text-primary)]">{subtitle.attributes.release}</h3>
                 <div className="flex items-center space-x-4 text-sm">
-                  <span className="text-[var(--text-secondary)]">
-                    Language: {subtitle.attributes.language}
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold border-2 border-[var(--primary)] bg-[var(--primary)]/20 text-[var(--primary)] shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]">
+                    {getLanguageName(subtitle.attributes.language)}
                   </span>
                   <span className="text-[var(--text-secondary)]">
                     File: {subtitle.attributes.files[0].file_name}
@@ -58,7 +64,7 @@ export function SearchResults({ results, loading, downloading, onDownload, hasSe
               <button
                 onClick={() => onDownload(subtitle.attributes.files[0].file_id)}
                 disabled={downloading === subtitle.attributes.files[0].file_id}
-                className="comic-button text-sm px-3 py-2 cursor-pointer"
+                className="comic-button shrink-0 text-sm px-3 py-2 cursor-pointer"
               >
                 <ArrowDownTrayIcon className="h-4 w-4 mr-1.5 inline" />
                 {downloading === subtitle.attributes.files[0].file_id ? 'Downloading...' : 'Download'}
