@@ -90,6 +90,11 @@ export default function Home() {
               onChange={(e) => setQuery(e.target.value)}
               className="w-full px-4 py-2.5 border-2 border-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-colors bg-[var(--input-background)] text-white"
               placeholder="Enter movie or TV show title..."
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
             />
           </div>
 
