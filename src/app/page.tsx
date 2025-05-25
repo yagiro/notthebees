@@ -15,6 +15,7 @@ export default function Home() {
   const [results, setResults] = useState<Subtitle[]>([]);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState<number | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -26,6 +27,7 @@ export default function Home() {
 
   const handleSearch = async () => {
     setLoading(true);
+    setHasSearched(true);
     try {
       const response = await searchSubtitles({
         query,
@@ -127,6 +129,7 @@ export default function Home() {
             loading={loading}
             downloading={downloading}
             onDownload={handleDownload}
+            hasSearched={hasSearched}
           />
         </div>
       </div>

@@ -6,9 +6,10 @@ interface SearchResultsProps {
   loading: boolean;
   downloading: number | null;
   onDownload: (fileId: number) => void;
+  hasSearched: boolean;
 }
 
-export function SearchResults({ results, loading, downloading, onDownload }: SearchResultsProps) {
+export function SearchResults({ results, loading, downloading, onDownload, hasSearched }: SearchResultsProps) {
   if (loading) {
     return (
       <div className="mt-8 text-center py-8">
@@ -21,12 +22,16 @@ export function SearchResults({ results, loading, downloading, onDownload }: Sea
     );
   }
 
-  if (results.length === 0) {
+  if (hasSearched && results.length === 0) {
     return (
       <div className="mt-8 text-center py-8">
         <p className="text-[var(--text-secondary)]">No results found</p>
       </div>
     );
+  }
+
+  if (!hasSearched) {
+    return null;
   }
 
   return (
