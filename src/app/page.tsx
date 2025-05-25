@@ -25,6 +25,12 @@ export default function Home() {
     fetchLanguages();
   }, []);
 
+  useEffect(() => {
+    if (fileHash) {
+      handleSearch();
+    }
+  }, [fileHash]);
+
   const handleSearch = async () => {
     setLoading(true);
     setHasSearched(true);
