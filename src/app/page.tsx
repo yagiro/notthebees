@@ -69,11 +69,14 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Subtitle Search</h1>
+    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">SubSync</h1>
+          <p className="text-lg text-gray-600">Your smart companion for finding the perfect subtitles in any language</p>
+        </div>
         
-        <div className="space-y-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
           {/* Text Search */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -83,8 +86,8 @@ export default function Home() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md"
-              placeholder="Enter search text..."
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="Enter movie or TV show title..."
             />
           </div>
 
@@ -105,9 +108,17 @@ export default function Home() {
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300"
+            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            {loading ? 'Searching...' : 'Search'}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Searching...
+              </span>
+            ) : 'Search'}
           </button>
 
           {/* Search Results */}
