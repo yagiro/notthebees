@@ -41,7 +41,7 @@ export function SearchResults({ results, loading, downloading, onDownload, hasSe
         {results.map((subtitle) => (
           <div 
             key={subtitle.id} 
-            className="comic-box bg-white p-4 hover:bg-[var(--secondary)]/5 transition-colors"
+            className="comic-box bg-[var(--form-background)] p-4 hover:bg-[var(--secondary)]/5 transition-colors"
           >
             <div className="flex justify-between items-start">
               <div className="space-y-1">
@@ -58,7 +58,7 @@ export function SearchResults({ results, loading, downloading, onDownload, hasSe
               <button
                 onClick={() => onDownload(subtitle.attributes.files[0].file_id)}
                 disabled={downloading === subtitle.attributes.files[0].file_id}
-                className="comic-button text-sm px-3 py-2"
+                className="comic-button text-sm px-3 py-2 cursor-pointer"
               >
                 <ArrowDownTrayIcon className="h-4 w-4 mr-1.5 inline" />
                 {downloading === subtitle.attributes.files[0].file_id ? 'Downloading...' : 'Download'}

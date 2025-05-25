@@ -110,7 +110,7 @@ export default function Home() {
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="comic-button w-full"
+            className="comic-button w-full cursor-pointer"
           >
             {loading ? (
               <span className="flex items-center justify-center">
