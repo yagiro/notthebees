@@ -33,33 +33,33 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-white mb-2">
         Select Languages
       </label>
       <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-left bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-left bg-[var(--input-background)] hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         >
-          <span className="block truncate text-gray-900">
+          <span className="block truncate text-white/50">
             {selectedLanguages.length > 0
-              ? selectedLanguages.map(lang => lang.name).join(', ')
-              : 'Select languages...'}
+              ? <span className="block truncate text-white">{selectedLanguages.map(lang => lang.name).join(', ')}</span>
+              : <span className="block truncate text-white/50">Select languages...</span>}
           </span>
         </button>
         
         {isOpen && (
-          <div ref={menuRef} className="absolute z-20 mt-1 w-full bg-white shadow-lg rounded-lg border border-gray-200">
+          <div ref={menuRef} className="absolute z-20 mt-1 w-full bg-[var(--input-background)] shadow-lg rounded-lg border border-gray-200">
             {/* Language Search Input */}
-            <div className="sticky top-0 bg-white px-3 py-2 border-b border-gray-200">
+            <div className="sticky top-0 px-3 py-2 border-b border-gray-200">
               <div className="relative">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
                   value={languageSearch}
                   onChange={(e) => setLanguageSearch(e.target.value)}
-                  className="w-full text-gray-900 pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full text-white bg-[var(--input-background)] pl-9 pr-3 py-2 text-sm border border-[var(--text-primary)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]"
                   placeholder="Search languages..."
                 />
               </div>
@@ -78,9 +78,9 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
                       onSelectionChange([...selectedLanguages, language]);
                     }
                   }}
-                  className={`relative cursor-pointer select-none py-2 pl-10 pr-4 hover:bg-blue-50 ${
+                  className={`relative cursor-pointer select-none py-2 pl-10 pr-4 bg-[var(--input-background)] hover:bg-[var(--input-background)]/90 text-white ${
                     selectedLanguages.some(lang => lang.code === language.code)
-                      ? 'bg-blue-50 text-blue-900'
+                      ? 'bg-[var(--input-background)]/70'
                       : 'text-gray-900'
                   }`}
                 >
@@ -92,7 +92,7 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
                     {language.name}
                   </span>
                   {selectedLanguages.some(lang => lang.code === language.code) && (
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                       <CheckIcon className="h-5 w-5" aria-hidden="true" />
                     </span>
                   )}

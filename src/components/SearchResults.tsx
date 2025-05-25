@@ -14,7 +14,7 @@ export function SearchResults({ results, loading, downloading, onDownload }: Sea
       <div className="mt-8 text-center py-8">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 bg-gray-100 rounded-lg"></div>
+            <div key={i} className="h-24 bg-[var(--secondary)]/10 rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -24,28 +24,28 @@ export function SearchResults({ results, loading, downloading, onDownload }: Sea
   if (results.length === 0) {
     return (
       <div className="mt-8 text-center py-8">
-        <p className="text-gray-500">No results found</p>
+        <p className="text-[var(--text-secondary)]">No results found</p>
       </div>
     );
   }
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Search Results</h2>
+      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Search Results</h2>
       <div className="space-y-4">
         {results.map((subtitle) => (
           <div 
             key={subtitle.id} 
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-200 transition-colors"
+            className="comic-box bg-white p-4 hover:bg-[var(--secondary)]/5 transition-colors"
           >
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <h3 className="font-medium text-gray-900">{subtitle.attributes.release}</h3>
+                <h3 className="font-medium text-[var(--text-primary)]">{subtitle.attributes.release}</h3>
                 <div className="flex items-center space-x-4 text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-[var(--text-secondary)]">
                     Language: {subtitle.attributes.language}
                   </span>
-                  <span className="text-gray-600">
+                  <span className="text-[var(--text-secondary)]">
                     File: {subtitle.attributes.files[0].file_name}
                   </span>
                 </div>
@@ -53,9 +53,9 @@ export function SearchResults({ results, loading, downloading, onDownload }: Sea
               <button
                 onClick={() => onDownload(subtitle.attributes.files[0].file_id)}
                 disabled={downloading === subtitle.attributes.files[0].file_id}
-                className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors disabled:text-blue-300 disabled:hover:bg-transparent"
+                className="comic-button text-sm px-3 py-2"
               >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-1.5" />
+                <ArrowDownTrayIcon className="h-4 w-4 mr-1.5 inline" />
                 {downloading === subtitle.attributes.files[0].file_id ? 'Downloading...' : 'Download'}
               </button>
             </div>

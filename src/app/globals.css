@@ -1,20 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
+  --form-background: #5e4e4e;
+  --input-background: #412f2f;
   --foreground: #1a1a1a;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --secondary: #f3f4f6;
+  --primary: #FF6B6B;
+  --primary-hover: #FF5252;
+  --secondary: #4ECDC4;
+  --secondary-hover: #45B7AF;
+  --accent: #FFE66D;
   --border: #e5e7eb;
-  --text-primary: #1a1a1a;
-  --text-secondary: #4b5563;
-  --text-muted: #6b7280;
+  --text-primary: #2D3436;
+  --text-secondary: #636E72;
+  --text-muted: #B2BEC3;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-accent: var(--accent);
   --color-border: var(--border);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -23,8 +29,17 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1a1a1a;
+    --foreground: #fafafa;
+    --primary: #FF6B6B;
+    --primary-hover: #FF5252;
+    --secondary: #4ECDC4;
+    --secondary-hover: #45B7AF;
+    --accent: #FFE66D;
+    --border: #2d3436;
+    --text-primary: #fafafa;
+    --text-secondary: #dfe6e9;
+    --text-muted: #b2bec3;
   }
 }
 
@@ -36,6 +51,43 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Comic book inspired styles */
+.comic-box {
+  border: 2px solid var(--text-primary);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+/* .comic-box:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--text-primary);
+} */
+
+.comic-button {
+  background: var(--primary);
+  color: white;
+  border: 2px solid var(--text-primary);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 4px 4px 0 var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.comic-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--text-primary);
+  background: var(--primary-hover);
+}
+
+.comic-button:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--text-primary);
 }
 
 /* Custom scrollbar */

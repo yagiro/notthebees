@@ -69,24 +69,24 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <main className="min-h-screen bg-gradient-to-b from-[var(--background)] to-[var(--secondary)]/10">
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">SubSync</h1>
-          <p className="text-lg text-gray-600 font-mono">Your smart companion for finding the perfect subtitles in any language</p>
+          <h1 className="text-5xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">SubSync</h1>
+          <p className="text-lg text-[var(--text-secondary)] font-mono">Your smart companion for finding the perfect subtitles in any language</p>
         </div>
         
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
+        <div className="comic-box bg-[var(--form-background)] p-8 space-y-6">
           {/* Text Search */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Search by Text
             </label>
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              className="w-full px-4 py-2.5 border-2 border-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-colors bg-[var(--input-background)] text-white"
               placeholder="Enter movie or TV show title..."
             />
           </div>
@@ -108,7 +108,7 @@ export default function Home() {
           <button
             onClick={handleSearch}
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-blue-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="comic-button w-full"
           >
             {loading ? (
               <span className="flex items-center justify-center">
