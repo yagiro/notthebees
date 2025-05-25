@@ -73,7 +73,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">SubSync</h1>
-          <p className="text-lg text-gray-600">Your smart companion for finding the perfect subtitles in any language</p>
+          <p className="text-lg text-gray-600 font-mono">Your smart companion for finding the perfect subtitles in any language</p>
         </div>
         
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
