@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { CheckIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Language } from '@/types/subtitles';
 
@@ -11,6 +11,20 @@ interface LanguageSelectorProps {
 export function LanguageSelector({ languages, selectedLanguages, onSelectionChange }: LanguageSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [languageSearch, setLanguageSearch] = useState('');
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const filteredLanguages = languages.filter(lang => 
     lang.name.toLowerCase().includes(languageSearch.toLowerCase()) ||
@@ -26,9 +40,9 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-4 py-2 border rounded-md text-left"
+          className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-left bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         >
-          <span className="block truncate">
+          <span className="block truncate text-gray-900">
             {selectedLanguages.length > 0
               ? selectedLanguages.map(lang => lang.name).join(', ')
               : 'Select languages...'}
@@ -36,23 +50,23 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
         </button>
         
         {isOpen && (
-          <div className="absolute z-20 mt-1 w-full bg-white shadow-lg rounded-md">
+          <div ref={menuRef} className="absolute z-20 mt-1 w-full bg-white shadow-lg rounded-lg border border-gray-200">
             {/* Language Search Input */}
-            <div className="sticky top-0 bg-white px-3 py-2 border-b">
+            <div className="sticky top-0 bg-white px-3 py-2 border-b border-gray-200">
               <div className="relative">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
                   value={languageSearch}
                   onChange={(e) => setLanguageSearch(e.target.value)}
-                  className="w-full text-gray-800 pl-9 pr-3 py-1 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-gray-900 pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Search languages..."
                 />
               </div>
             </div>
             
             {/* Language Options */}
-            <div className="max-h-60 overflow-auto">
+            <div className="max-h-60 overflow-auto py-1">
               {filteredLanguages.map((language) => (
                 <div
                   key={language.code}
@@ -64,7 +78,7 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
                       onSelectionChange([...selectedLanguages, language]);
                     }
                   }}
-                  className={`relative cursor-pointer select-none py-2 pl-10 pr-4 hover:bg-blue-100 ${
+                  className={`relative cursor-pointer select-none py-2 pl-10 pr-4 hover:bg-blue-50 ${
                     selectedLanguages.some(lang => lang.code === language.code)
                       ? 'bg-blue-50 text-blue-900'
                       : 'text-gray-900'
