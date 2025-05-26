@@ -25,10 +25,10 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
-}
+/* } */
 
-@media (prefers-color-scheme: dark) {
-  :root {
+/* @media (prefers-color-scheme: dark) { */
+  /* :root { */
     --background: #1a1a1a;
     --foreground: #fafafa;
     --primary: #FF6B6B;
@@ -40,7 +40,7 @@
     --text-primary: #fafafa;
     --text-secondary: #dfe6e9;
     --text-muted: #b2bec3;
-  }
+  /* } */
 }
 
 body {
