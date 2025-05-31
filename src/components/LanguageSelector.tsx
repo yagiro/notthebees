@@ -50,11 +50,11 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
       <label className="block text-sm font-medium text-white mb-2">
         Select Languages
       </label>
-      <div className="relative">
+      <div className="relative flex gap-2">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-left bg-[var(--input-background)] hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-left bg-[var(--input-background)] hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         >
           <span className="block truncate text-white/50">
             {selectedLanguages.length > 0
@@ -62,6 +62,16 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
               : <span className="block truncate text-white/50">Select languages...</span>}
           </span>
         </button>
+        
+        {selectedLanguages.length > 0 && (
+          <button
+            type="button"
+            onClick={() => onSelectionChange([])}
+            className="px-4 py-2.5 border border-gray-200 rounded-lg bg-[var(--input-background)] hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-white"
+          >
+            Clear
+          </button>
+        )}
         
         {isOpen && (
           <div ref={menuRef} className="absolute z-20 mt-1 w-full bg-[var(--input-background)] shadow-lg rounded-lg border border-gray-200">
