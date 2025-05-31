@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { CheckIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { Language } from '@/types/subtitles';
 
@@ -25,6 +25,20 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const filterInputRefFunc = useCallback((elem: HTMLInputElement) => {
+    // console.log('elem', elem)
+    elem.focus()
+
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth' // Optional: makes the scroll smooth
+    });
+
+    return () => {
+      // console.log('elem-cleanup', elem)
+    }
+  }, [])
 
   const filteredLanguages = languages.filter(lang => 
     lang.name.toLowerCase().includes(languageSearch.toLowerCase()) ||
@@ -61,6 +75,7 @@ export function LanguageSelector({ languages, selectedLanguages, onSelectionChan
                   onChange={(e) => setLanguageSearch(e.target.value)}
                   className="w-full text-white bg-[var(--input-background)] pl-9 pr-3 py-2 text-sm border border-[var(--text-primary)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]"
                   placeholder="Search languages..."
+                  ref={ filterInputRefFunc }
                 />
               </div>
             </div>
