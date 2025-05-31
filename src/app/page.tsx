@@ -25,6 +25,24 @@ export default function Home() {
   const [downloading, setDownloading] = useState<number | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
+  // Load saved languages from localStorage on mount
+  useEffect(() => {
+    const savedLanguages = localStorage.getItem('selectedLanguages');
+    if (savedLanguages) {
+      try {
+        const parsedLanguages = JSON.parse(savedLanguages);
+        setSelectedLanguages(parsedLanguages);
+      } catch (error) {
+        console.error('Error parsing saved languages:', error);
+      }
+    }
+  }, []);
+
+  // Save languages to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('selectedLanguages', JSON.stringify(selectedLanguages));
+  }, [selectedLanguages]);
+
   useEffect(() => {
     const fetchLanguages = async () => {
       const languagesData = await getLanguages();
