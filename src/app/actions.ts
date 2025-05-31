@@ -73,7 +73,7 @@ export async function getLanguages(): Promise<Language[]> {
 
 export async function downloadSubtitle(fileId: number): Promise<{ fileName: string; content: string }> {
   console.log('Downloading subtitle with file_id:', fileId);
-  console.log('Using bearer token:', process.env.USER_BEARER_TOKEN);
+  // console.log('Using bearer token:', process.env.USER_BEARER_TOKEN);
   
   const requestConfig = {
     headers: {
@@ -84,7 +84,7 @@ export async function downloadSubtitle(fileId: number): Promise<{ fileName: stri
     }
   };
   
-  console.log('Request config:', JSON.stringify(requestConfig, null, 2));
+  // console.log('Request config:', JSON.stringify(requestConfig, null, 2));
   
   const response = await api.post('/download', 
     { file_id: fileId },

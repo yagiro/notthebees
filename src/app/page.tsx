@@ -7,6 +7,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { FileHashInput } from '@/components/FileHashInput';
 import { SearchResults } from '@/components/SearchResults';
 import { Header } from '@/components/Header';
+import { usePrev } from '@/utils/usePrev';
 
 interface ISearchParams {
   query?: string;
@@ -32,13 +33,16 @@ export default function Home() {
     fetchLanguages();
   }, []);
 
+  const languageCodes = selectedLanguages.map(lang => lang.code)
+
   const currSearchParams: ISearchParams = {
     query,
     fileHash,
-    languages: selectedLanguages.map(lang => lang.code),
+    languages: languageCodes,
   }
 
   const handleSearch = useCallback(async (searchParams: ISearchParams) => {
+    console.log('searching', searchParams)
     setLoading(true);
     setHasSearched(true);
     try {
@@ -51,12 +55,15 @@ export default function Home() {
     }
   }, [setLoading, setHasSearched, setResults]);
 
+  const prevFileHash = usePrev(fileHash)
 
   useEffect(() => {
-    if (fileHash) {
-      handleSearch({ fileHash });
+    // console.log('effect run', { fileHash, prevFileHash, languageCodes })
+    if (fileHash !== prevFileHash && fileHash) {
+      // console.log('running search')
+      handleSearch({ fileHash, languages: languageCodes });
     }
-  }, [fileHash, handleSearch]);
+  }, [fileHash, prevFileHash, languageCodes, handleSearch]);
 
   const handleDownload = async (fileId: number) => {
     setDownloading(fileId);
